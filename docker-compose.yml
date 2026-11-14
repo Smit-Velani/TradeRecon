@@ -1,0 +1,40 @@
+services:
+
+  traderecon-api:
+    build:
+      context: .
+      dockerfile: TradeRecon.Api/Dockerfile
+
+    container_name: traderecon-api
+
+    ports:
+      - "5055:8080"
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__TradeRecon: Data Source=/data/traderecon.db
+
+    volumes:
+      - traderecon-data:/data
+
+
+  traderecon-web:
+    build:
+      context: .
+      dockerfile: TradeRecon.Web/Dockerfile
+
+    container_name: traderecon-web
+
+    ports:
+      - "5056:8080"
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      TradeReconApi__BaseUrl: http://traderecon-api:8080/
+
+    depends_on:
+      - traderecon-api
+
+
+volumes:
+  traderecon-data:
